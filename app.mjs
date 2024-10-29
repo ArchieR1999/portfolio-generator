@@ -34,9 +34,16 @@ const promptUser = () => {
       }
     },
     {
-      type: 'input',
-      name: 'about',
-      message: 'Please provide some information about yourself:'
+      type: 'confirm',
+      name: 'confirmAbout',
+      message: 'Would you like to enter some information about yourself in an "About" section?',
+      default: true
+    },
+    {
+        type: 'input',
+        name: 'about',
+        message: 'Provide some information about yourself:',
+        when: ({ confirmAbout }) => confirmAbout
     }
   ]);
 };
@@ -114,7 +121,15 @@ Add a New Project
       message: 'Would you like to enter another project?',
       default: false
     }
-  ]);
+  ])
+  .then(projectData => {
+    portfolioData.projects.push(projectData);
+    if (projectData.confirmAddProject) {
+      return promptProject(portfolioData);
+    } else {
+      return portfolioData;
+    }
+  });
 };
 
 // Start the prompt chain
@@ -122,7 +137,16 @@ promptUser()
   .then(promptProject)
   .then(portfolioData => {
     console.log(portfolioData);
+    // will be uncommented in lesson 4
+    // const pageHTML = generatePage(portfolioData);
+    // fs.writeFile('./index.html', pageHTML, err => {
+    //   if (err) throw new Error(err);
+    //   console.log('Page created! Check out index.html in this directory to see it!');
+    // });
   });
+
+// OLD CODE BELOW
+
 // const fs = require('fs');
 
 // // this will allow to use the generatePage function from the src folder, not in this file. 
@@ -137,11 +161,6 @@ promptUser()
   
 //     console.log('Portfolio complete! Check out index.html to see the output!');
 // });
-
-
-
-
-
 
 
 
